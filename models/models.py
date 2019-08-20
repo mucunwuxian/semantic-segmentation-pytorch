@@ -30,6 +30,10 @@ class SegmentationModule(SegmentationModuleBase):
     def forward(self, feed_dict, *, segSize=None):
         # training
         if segSize is None:
+            if (type(feed_dict) == list):
+                feed_dict              = feed_dict[0]
+                feed_dict['img_data']  = feed_dict['img_data'].to('cuda:0')
+                feed_dict['seg_label'] = feed_dict['seg_label'].to('cuda:0')
             if self.deep_sup_scale is not None: # use deep supervision technique
                 (pred, pred_deepsup) = self.decoder(self.encoder(feed_dict['img_data'], return_feature_maps=True))
             else:
